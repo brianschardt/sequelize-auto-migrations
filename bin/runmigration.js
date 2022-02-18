@@ -89,10 +89,34 @@ async function executeSql(queryInterface, sql) {
 }
 
 (async () => {
+//   let createIfNot = await executeSql(queryInterface,
+//     'CREATE TABLE IF NOT EXISTS "SequelizeMeta" (name varchar UNIQUE)'
+//     );
+//   let res = await executeSql(queryInterface, 'select * from "SequelizeMeta"');
+  
+  var loggedDialect=queryInterface.sequelize.options.dialect;
+  var createIfNotQuery;
+  if(loggedDialect=='mysql')
+  {
+    createIfNotQuery='CREATE TABLE IF NOT EXISTS "SequelizeMeta" (name varchar UNIQUE)'
+  }
+  else if(loggedDialect=='mssql')
+  {
+    createIfNotQuery='IF NOT EXISTS (SELECT * FROM sysobjects WHERE name= \'SequelizeMeta \' and xtype= \'U \') CREATE TABLE SequelizeMeta (name varchar(100) not null UNIQUE)'
+  }
   let createIfNot = await executeSql(queryInterface,
-    'CREATE TABLE IF NOT EXISTS "SequelizeMeta" (name varchar UNIQUE)'
+    createIfNotQuery
+    //'CREATE TABLE IF NOT EXISTS "SequelizeMeta" (name varchar UNIQUE)'
     );
-  let res = await executeSql(queryInterface, 'select * from "SequelizeMeta"');
+    let res;
+    if(loggedDialect=='mysql')
+    { 
+      res = await executeSql(queryInterface, 'select * from "SequelizeMeta"'); 
+    }
+    else if(loggedDialect=='mssql')
+    {
+      res = await executeSql(queryInterface, 'select * from SequelizeMeta');
+    }
   let ranMigrations = res.map(r => r.name);
   migrationFiles = migrationFiles.filter(mf => {
     return (!ranMigrations.includes(mf));
