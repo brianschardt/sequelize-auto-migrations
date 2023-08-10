@@ -1,6 +1,10 @@
 {
   "development": {
-    "storage": "database.sqlite",
-    "dialect": "sqlite"
+    "username": "",
+    "password": "",
+    "database": "example_migrate",
+    "host": "localhost",
+    "dialect": "postgres",
+    "logging": false
   }
 }

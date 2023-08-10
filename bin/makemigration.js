@@ -12,7 +12,7 @@ const _ = require("lodash");
 
 const optionDefinitions = [
   { name: 'preview', alias: 'p', type: Boolean, description: 'Show migration preview (does not change any files)' },
-  { name: 'name', alias: 'n', type: String, description: 'Set migration name (default: "noname")', },
+  { name: 'name', alias: 'n', type: String, description: 'Set migration name (default: "dd-mm-yy_ms")', },
   { name: 'comment', alias: 'c', type: String, description: 'Set migration comment' },
   { name: 'execute', alias: 'x', type: Boolean, description: 'Create new migration and execute it' },
   { name: 'migrations-path', type: String, description: 'The path to the migrations folder' },
@@ -35,7 +35,20 @@ if (options.help) {
 if (!process.env.PWD) {
   process.env.PWD = process.cwd()
 }
+const formattedDate =()=>{
+  const currentDate = new Date();
 
+// Extract day, month, and year
+  const day = String(currentDate.getDate()).padStart(2, '0');
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+  const year = currentDate.getFullYear();
+
+// Extract hours, minutes, seconds, and milliseconds
+  const milliseconds = Math.floor(currentDate.getTime() / 1000);
+
+// Format the date and time
+  return day + '-' + month + '-' + year + '_' + milliseconds
+}
 const {
   migrationsDir,
   modelsDir
@@ -110,10 +123,12 @@ fs.writeFileSync(path.join(migrationsDir, '_current.json'), JSON.stringify(curre
 let info = migrate.writeMigration(currentState.revision,
   migration,
   migrationsDir,
-  (options.name) ? options.name : 'noname',
+  (options.name) ? options.name : formattedDate(),
   (options.comment) ? options.comment : '');
 
 console.log(`New migration to revision ${currentState.revision} has been saved to file '${info.filename}'`);
+
+
 
 if (options.execute) {
   migrate.executeMigration(sequelize.getQueryInterface(), info.filename, 0, (err) => {

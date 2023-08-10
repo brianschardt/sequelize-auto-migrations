@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:makemigrations": "node ../bin/makemigration.js",
+    "db:migrate": "npx sequelize-cli db:migrate"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "sequelize": "^4.42.0",
-    "sqlite3": "^4.0.4"
+    "sequelize": "^6.31.1",
+    "pg": "^8.10.0"
   }
 }
