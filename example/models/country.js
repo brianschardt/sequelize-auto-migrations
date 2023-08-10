@@ -5,6 +5,8 @@ module.exports = function (DB, { INTEGER, STRING, BOOLEAN }) {
     {
       id:       { type: INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
       title:    { type: STRING,  allowNull: false },
+      name:    { type: STRING,  allowNull: false },
+      age:    { type: STRING,  allowNull: false },
       display:  { type: BOOLEAN, allowNull: false, defaultValue: true }
     },
     {
